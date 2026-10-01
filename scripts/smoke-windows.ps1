@@ -55,7 +55,10 @@ for ($i = 0; $i -lt 25; $i++) {
     break
   } catch { Start-Sleep -Seconds 1 }
 }
-if (-not $status -or $status.businessName -ne "Prueba CI") { throw "El panel no respondió después de instalar" }
+if (-not $status -or $status.businessName -ne "Prueba CI") {
+  Show-InstallerDiagnostics
+  throw "El panel no respondió después de instalar"
+}
 
 $originalConfig = Get-Content (Join-Path $programDataDirectory "config.json") -Raw
 $stateFile = Join-Path $programDataDirectory "state.json"
@@ -70,7 +73,10 @@ for ($i = 0; $i -lt 25; $i++) {
     break
   } catch { Start-Sleep -Seconds 1 }
 }
-if (-not $status) { throw "El panel no respondió después de actualizar" }
+if (-not $status) {
+  Show-InstallerDiagnostics
+  throw "El panel no respondió después de actualizar"
+}
 
 try {
   Invoke-WebRequest "http://127.0.0.1:8790/api/drawer/open" -Method Post -Headers @{ Origin = "https://evil.example.com"; "X-Local-Token" = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" } -Body "{}" -UseBasicParsing | Out-Null

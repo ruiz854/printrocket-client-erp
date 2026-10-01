@@ -19,6 +19,7 @@ if (Test-Path $nodeLicense) { Copy-Item $nodeLicense (Join-Path $app "NODE-LICEN
 
 Invoke-WebRequest "https://github.com/winsw/winsw/releases/download/v2.12.0/WinSW-x64.exe" -OutFile (Join-Path $app "PrintRocketService.exe")
 Copy-Item (Join-Path $root "windows\PrintRocketService.xml") $app
+Copy-Item (Join-Path $root "package.json") $app
 Copy-Item (Join-Path $root "src") (Join-Path $app "src") -Recurse
 Copy-Item (Join-Path $root "windows\print.ps1") (Join-Path $app "windows")
 Copy-Item (Join-Path $root "windows\configure.ps1") (Join-Path $app "windows")
