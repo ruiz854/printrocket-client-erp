@@ -1,6 +1,6 @@
 Unicode True
 Name "PrintRocket Cliente ERP"
-OutFile "dist\PrintRocketClient-Setup.exe"
+OutFile "..\dist\PrintRocketClient-Setup.exe"
 InstallDir "$PROGRAMFILES64\PrintRocketClient"
 RequestExecutionLevel admin
 ShowInstDetails show
@@ -20,7 +20,7 @@ Section "Instalar" SecMain
   IfFileExists "$INSTDIR\PrintRocketService.exe" 0 +2
     nsExec::ExecToLog '"$INSTDIR\PrintRocketService.exe" stop'
   SetOutPath "$INSTDIR"
-  File /r "build\app\*"
+  File /r "..\build\app\*"
   CreateDirectory "$PROGRAMDATA\PrintRocket\logs"
   IfFileExists "$PROGRAMDATA\PrintRocket\config.json" configured
     ExecWait 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$INSTDIR\windows\configure.ps1" -OutputDirectory "$PROGRAMDATA\PrintRocket"' $0

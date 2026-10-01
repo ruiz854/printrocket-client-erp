@@ -3,7 +3,6 @@ $root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 Set-Location $root
 
 $nodeVersion = "v24.11.1"
-$nodeArchive = "node-$nodeVersion-win-x64.zip"
 $build = Join-Path $root "build"
 $app = Join-Path $build "app"
 if (Test-Path $build) { Remove-Item $build -Recurse -Force }
@@ -11,16 +10,12 @@ New-Item -ItemType Directory -Path $app -Force | Out-Null
 New-Item -ItemType Directory -Path (Join-Path $app "windows") -Force | Out-Null
 New-Item -ItemType Directory -Path (Join-Path $root "dist") -Force | Out-Null
 
-Invoke-WebRequest "https://nodejs.org/dist/$nodeVersion/$nodeArchive" -OutFile (Join-Path $build $nodeArchive)
-Invoke-WebRequest "https://nodejs.org/dist/$nodeVersion/SHASUMS256.txt" -OutFile (Join-Path $build "SHASUMS256.txt")
-$expectedLine = Get-Content (Join-Path $build "SHASUMS256.txt") | Where-Object { $_ -match [regex]::Escape($nodeArchive) + '$' } | Select-Object -First 1
-if (-not $expectedLine) { throw "No se encontró el hash oficial de Node.js" }
-$expected = ($expectedLine -split '\s+')[0].ToLowerInvariant()
-$actual = (Get-FileHash (Join-Path $build $nodeArchive) -Algorithm SHA256).Hash.ToLowerInvariant()
-if ($expected -ne $actual) { throw "El ZIP de Node.js no coincide con el hash oficial" }
-
-Expand-Archive (Join-Path $build $nodeArchive) -DestinationPath $build
-Copy-Item (Join-Path $build "node-$nodeVersion-win-x64\node.exe") $app
+$activeNodeVersion = node --version
+if ($activeNodeVersion -ne $nodeVersion) { throw "La compilación requiere Node.js $nodeVersion" }
+$nodeBinary = (Get-Command node).Source
+Copy-Item $nodeBinary (Join-Path $app "node.exe")
+$nodeLicense = Join-Path (Split-Path $nodeBinary) "LICENSE"
+if (Test-Path $nodeLicense) { Copy-Item $nodeLicense (Join-Path $app "NODE-LICENSE.txt") }
 
 Invoke-WebRequest "https://github.com/winsw/winsw/releases/download/v2.12.0/WinSW-x64.exe" -OutFile (Join-Path $app "PrintRocketService.exe")
 Copy-Item (Join-Path $root "windows\PrintRocketService.xml") $app

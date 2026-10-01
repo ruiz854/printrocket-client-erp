@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 24.11.1
           cache: npm
       - name: Install NSIS
         shell: powershell
@@ -24,6 +24,9 @@ jobs:
       - name: Build installer and run tests
         shell: powershell
         run: ./scripts/build-windows.ps1
+      - name: Smoke test Windows installation
+        shell: powershell
+        run: ./scripts/smoke-windows.ps1
       - name: Upload installer for review
         uses: actions/upload-artifact@v4
         with:

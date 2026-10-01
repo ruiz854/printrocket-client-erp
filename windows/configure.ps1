@@ -81,6 +81,12 @@ if ($config.logoPath) {
 $configFile = Join-Path $OutputDirectory "config.json"
 $json = $config | ConvertTo-Json -Depth 8
 [System.IO.File]::WriteAllText($configFile, $json, (New-Object System.Text.UTF8Encoding($false)))
+& (Join-Path $PSScriptRoot "..\node.exe") (Join-Path $PSScriptRoot "..\src\check-config.js") $configFile
+if ($LASTEXITCODE -ne 0) {
+  Remove-Item -LiteralPath $configFile -Force
+  [System.Windows.Forms.MessageBox]::Show("La configuración privada no pasó la validación. Revise la URL, el origen y las claves.", "Configuración inválida") | Out-Null
+  exit 3
+}
 
 $port = [int]$config.dashboardPort
 $urlShortcut = "[InternetShortcut]`r`nURL=http://127.0.0.1:$port/`r`n"
