@@ -1,12 +1,28 @@
 $ErrorActionPreference = "Stop"
+function Show-InstallerDiagnostics {
+  Get-Process | Where-Object { $_.ProcessName -match 'PrintRocket|powershell|nsis' } |
+    Select-Object ProcessName, Id, Path | Format-Table -AutoSize | Out-String | Write-Output
+  Get-Service PrintRocketClient -ErrorAction SilentlyContinue | Format-List * | Out-String | Write-Output
+  $logDirectory = Join-Path $env:ProgramData "PrintRocket\logs"
+  if (Test-Path $logDirectory) {
+    Get-ChildItem $logDirectory -File | ForEach-Object {
+      Write-Output "Log: $($_.FullName)"
+      Get-Content $_.FullName -Tail 25 -ErrorAction SilentlyContinue
+    }
+  }
+}
 function Invoke-Setup([string]$path, [string]$label) {
   Write-Output "Iniciando: $label"
   $process = Start-Process -FilePath $path -ArgumentList "/S" -PassThru
   if (-not $process.WaitForExit(60000)) {
+    Show-InstallerDiagnostics
     Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
     throw "$label excedió 60 segundos"
   }
-  if ($process.ExitCode -ne 0) { throw "$label falló: $($process.ExitCode)" }
+  if ($process.ExitCode -ne 0) {
+    Show-InstallerDiagnostics
+    throw "$label falló: $($process.ExitCode)"
+  }
   Write-Output "Completado: $label"
 }
 $root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path

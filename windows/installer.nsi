@@ -25,7 +25,10 @@ Section "Instalar" SecMain
   IfFileExists "$PROGRAMDATA\PrintRocket\config.json" configured
     ExecWait 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$INSTDIR\windows\configure.ps1" -OutputDirectory "$PROGRAMDATA\PrintRocket"' $0
     IntCmp $0 0 configured
+    IfSilent noConfigMessage
     MessageBox MB_ICONSTOP "No se importó una configuración válida. La instalación se detendrá."
+  noConfigMessage:
+    SetErrorLevel 1
     Abort
   configured:
   nsExec::ExecToStack 'sc.exe query PrintRocketClient'
@@ -36,14 +39,20 @@ Section "Instalar" SecMain
     Pop $0
     Pop $1
     StrCmp $0 "0" installed
+      IfSilent noInstallMessage
       MessageBox MB_ICONSTOP "No se pudo registrar el servicio de Windows: $1"
+    noInstallMessage:
+      SetErrorLevel 2
       Abort
   installed:
   nsExec::ExecToStack '"$INSTDIR\PrintRocketService.exe" start'
   Pop $0
   Pop $1
   StrCmp $0 "0" started
+    IfSilent noStartMessage
     MessageBox MB_ICONSTOP "No se pudo iniciar el servicio de Windows: $1"
+  noStartMessage:
+    SetErrorLevel 3
     Abort
   started:
   CopyFiles /SILENT "$PROGRAMDATA\PrintRocket\Panel Impresion.url" "$DESKTOP\Panel Impresion PrintRocket.url"
