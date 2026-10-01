@@ -21,9 +21,9 @@ Section "Instalar" SecMain
     nsExec::ExecToLog '"$INSTDIR\PrintRocketService.exe" stop'
   SetOutPath "$INSTDIR"
   File /r "..\build\app\*"
-  CreateDirectory "$PROGRAMDATA\PrintRocket\logs"
-  IfFileExists "$PROGRAMDATA\PrintRocket\config.json" configured
-    ExecWait 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$INSTDIR\windows\configure.ps1" -OutputDirectory "$PROGRAMDATA\PrintRocket"' $0
+  CreateDirectory "$COMMONPROGRAMDATA\PrintRocket\logs"
+  IfFileExists "$COMMONPROGRAMDATA\PrintRocket\config.json" configured
+    ExecWait 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$INSTDIR\windows\configure.ps1" -OutputDirectory "$COMMONPROGRAMDATA\PrintRocket"' $0
     IntCmp $0 0 configured
     IfSilent noConfigMessage
     MessageBox MB_ICONSTOP "No se importó una configuración válida. La instalación se detendrá."
@@ -55,7 +55,7 @@ Section "Instalar" SecMain
     SetErrorLevel 3
     Abort
   started:
-  CopyFiles /SILENT "$PROGRAMDATA\PrintRocket\Panel Impresion.url" "$DESKTOP\Panel Impresion PrintRocket.url"
+  CopyFiles /SILENT "$COMMONPROGRAMDATA\PrintRocket\Panel Impresion.url" "$DESKTOP\Panel Impresion PrintRocket.url"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PrintRocketClient" "DisplayName" "PrintRocket Cliente ERP"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PrintRocketClient" "UninstallString" '"$INSTDIR\Uninstall.exe"'

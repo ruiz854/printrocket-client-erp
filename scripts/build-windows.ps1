@@ -32,8 +32,10 @@ if ($LASTEXITCODE -ne 0) { throw "Las pruebas fallaron" }
 
 $nsis = "${env:ProgramFiles(x86)}\NSIS\makensis.exe"
 if (-not (Test-Path $nsis)) { throw "No se encontró makensis.exe en $nsis" }
-& $nsis (Join-Path $root "windows\installer.nsi")
+$nsisOutput = & $nsis (Join-Path $root "windows\installer.nsi") 2>&1
+$nsisOutput | Write-Output
 if ($LASTEXITCODE -ne 0) { throw "No se pudo compilar el instalador" }
+if ($nsisOutput -match 'warning 6000') { throw "NSIS encontró una variable o constante desconocida" }
 
 Get-FileHash (Join-Path $root "dist\PrintRocketClient-Setup.exe") -Algorithm SHA256 |
   ForEach-Object { "$($_.Hash.ToLowerInvariant())  PrintRocketClient-Setup.exe" } |
