@@ -1,0 +1,28 @@
+// Añadir estos modelos a prisma/schema.prisma en Diamonds y propagar a Amazing.
+// Mantener la migración SQL de supabase-print-queue.sql junto al cambio.
+model PrintDevice {
+  user_id    String     @id @db.Uuid
+  label      String
+  active     Boolean    @default(true)
+  created_at DateTime   @default(now()) @db.Timestamptz(6)
+  jobs       PrintJob[]
+
+  @@map("print_devices")
+}
+
+model PrintJob {
+  id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  device_user_id String      @db.Uuid
+  device         PrintDevice @relation(fields: [device_user_id], references: [user_id])
+  request_id     String      @unique
+  sale_id        String
+  payload_base64 String
+  status         String      @default("pending")
+  created_at     DateTime    @default(now()) @db.Timestamptz(6)
+  claimed_at     DateTime?   @db.Timestamptz(6)
+  printed_at     DateTime?   @db.Timestamptz(6)
+  last_error     String?
+  attempt_count  Int         @default(0)
+
+  @@map("print_jobs")
+}
