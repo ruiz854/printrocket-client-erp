@@ -3,7 +3,7 @@
   <name>PrintRocket - Cliente de Impresión ERP</name>
   <description>Recibe tickets del Supabase del negocio y los imprime por USB.</description>
   <executable>%BASE%\node.exe</executable>
-  <arguments>%BASE%\src\index.js</arguments>
+  <arguments>"%BASE%\src\index.js"</arguments>
   <workingdirectory>%BASE%</workingdirectory>
   <env name="PRINTROCKET_CONFIG" value="%PROGRAMDATA%\PrintRocket\config.json" />
   <logpath>%PROGRAMDATA%\PrintRocket\logs</logpath>
