@@ -7,6 +7,7 @@ Este documento es la plantilla de integración. **No modifica los repositorios E
 Ejecuta `templates/supabase-print-queue.sql` como migración en el proyecto del ERP y añade `templates/prisma-models.prisma` a su `prisma/schema.prisma`. Crea un usuario Auth exclusivo para la PC y regístralo en `print_devices` según `CONFIGURACION.md`. La PC solo puede leer sus trabajos y ejecutar las funciones de tomar, confirmar o resolver; las escrituras iniciales las realiza el servidor ERP mediante Prisma.
 
 El ERP y la PC usan el **mismo proyecto Supabase** de ese negocio. No hacen falta Edge Functions ni otro servidor para impresión. El identificador `request_id` evita que una petición repetida cree dos tickets originales.
+La cola admite tickets de venta (`sale_id`) y de corte de caja (`cash_session_id`). Cada trabajo corresponde a uno de los dos.
 
 ## 2. Encolar al confirmar un cobro
 
@@ -29,6 +30,8 @@ El flujo actual `completeOfflineSale()` guarda la venta en IndexedDB y llama de 
 En `app/actions/dte-contingencia.ts`, `syncOneContingencySale` crea o encuentra la venta/DTE al reconectar. Encola el ticket con `queueSaleTicket(saleId, \`sale:${saleId}:original\`)` **antes** de devolver `ok: true`, también en la rama que encuentra un DTE existente. Si la cola falla, devuelve error de sincronización para mantener el borrador en IndexedDB y reintentar después. La clave estable impide duplicados en esos reintentos.
 
 ## 5. Estados, pruebas y mantenimiento
+
+Al cerrar una sesión de caja, encola el ticket de arqueo con `request_id = cash:<id>:original`. El cierre contable debe quedar guardado aunque falle la cola; muestra un reintento. Desde el historial, una reimpresión usa `cash:<id>:copy:<uuid>` y nunca manda un pulso de gaveta. El generador del corte debe ejecutarse en el servidor con el resumen y conteos de la sesión cerrada.
 
 El cliente confirma el trabajo cuando Windows acepta los bytes; si el resultado es incierto, el panel permite marcarlo como impreso o reimprimirlo. No abras la gaveta con el ticket o la reimpresión. Prueba efectivo, tarjeta, error de impresora, PC apagada, reconexión, contingencia y reintento de una venta ya sincronizada.
 

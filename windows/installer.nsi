@@ -59,7 +59,7 @@ Section "Instalar" SecMain
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PrintRocketClient" "DisplayName" "PrintRocket Cliente ERP"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PrintRocketClient" "UninstallString" '"$INSTDIR\Uninstall.exe"'
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PrintRocketClient" "DisplayVersion" "0.1.0"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PrintRocketClient" "DisplayVersion" "0.1.1"
 SectionEnd
 
 Section "Uninstall"

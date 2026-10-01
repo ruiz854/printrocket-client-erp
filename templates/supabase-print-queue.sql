@@ -13,23 +13,20 @@ create table if not exists public.print_jobs (
   id uuid primary key default gen_random_uuid(),
   device_user_id uuid not null references public.print_devices(user_id),
   request_id text not null unique,
-  sale_id text not null,
+  sale_id text,
+  cash_session_id text,
   payload_base64 text not null check (octet_length(payload_base64) <= 350000),
   status text not null default 'pending' check (status in ('pending','printing','printed','uncertain')),
   created_at timestamptz not null default now(),
   claimed_at timestamptz,
   printed_at timestamptz,
   last_error text,
-  attempt_count integer not null default 0
+  attempt_count integer not null default 0,
+  constraint print_jobs_single_source check ((sale_id is null) <> (cash_session_id is null))
 );
 
-create index if not exists print_jobs_pending_idx
-  on public.print_jobs (device_user_id, created_at)
-  where status = 'pending';
-
-create index if not exists print_jobs_uncertain_idx
-  on public.print_jobs (device_user_id, created_at)
-  where status = 'uncertain';
+create index if not exists print_jobs_device_user_id_status_created_at_idx
+  on public.print_jobs (device_user_id, status, created_at);
 
 alter table public.print_devices enable row level security;
 alter table public.print_jobs enable row level security;

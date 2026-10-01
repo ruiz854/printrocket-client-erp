@@ -15,7 +15,8 @@ model PrintJob {
   device_user_id String      @db.Uuid
   device         PrintDevice @relation(fields: [device_user_id], references: [user_id])
   request_id     String      @unique
-  sale_id        String
+  sale_id        String?
+  cash_session_id String?
   payload_base64 String
   status         String      @default("pending")
   created_at     DateTime    @default(now()) @db.Timestamptz(6)
@@ -24,5 +25,6 @@ model PrintJob {
   last_error     String?
   attempt_count  Int         @default(0)
 
+  @@index([device_user_id, status, created_at])
   @@map("print_jobs")
 }

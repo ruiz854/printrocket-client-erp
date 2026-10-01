@@ -35,7 +35,9 @@ export function startPanel(config, store, queue) {
       if (origin && !allowedOrigins.includes(origin)) return reply(res, 403, { error: "Origen no permitido" });
       const cors = origin ? { "Access-Control-Allow-Origin": origin, Vary: "Origin" } : {};
       if (req.method === "OPTIONS") {
-        res.writeHead(204, { ...cors, "Access-Control-Allow-Methods": "POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type, X-Local-Token", "Access-Control-Max-Age": "600" });
+        const privateNetwork = req.headers["access-control-request-private-network"] === "true"
+          ? { "Access-Control-Allow-Private-Network": "true" } : {};
+        res.writeHead(204, { ...cors, ...privateNetwork, "Access-Control-Allow-Methods": "POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type, X-Local-Token", "Access-Control-Max-Age": "600" });
         return res.end();
       }
       if (req.method === "GET" && req.url === "/") {
