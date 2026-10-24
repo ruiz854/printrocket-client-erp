@@ -12,6 +12,65 @@ Cliente genérico de impresión USB para Windows. Cada ERP usa una cola en **su 
 
 El instalador no se actualiza solo. La descarga pública contiene código, dependencias y Node.js; **no contiene claves de ningún negocio**. El ejecutable inicial no tiene firma comercial, por lo que Windows puede mostrar una advertencia de editor desconocido.
 
+## Generar el instalador localmente
+
+El archivo `PrintRocketClient-Setup.exe` **no se incluye en el repositorio**. Se genera a partir del código fuente con los siguientes pasos:
+
+### Requisitos
+
+- **Node.js 22+** (ya debe estar instalado para el desarrollo)
+- **NSIS** ([Nullsoft Scriptable Install System](https://nsis.sourceforge.io/Download)) instalado en `C:\Program Files (x86)\NSIS\makensis.exe`
+- **Windows** (el build requiere PowerShell y NSIS)
+
+### Pasos
+
+1. Clona el repositorio e instala dependencias:
+
+   ```bash
+   git clone https://github.com/ruiz854/printrocket-client-erp.git
+   cd printrocket-client-erp
+   npm ci
+   ```
+
+2. Verifica que las pruebas pasan:
+
+   ```powershell
+   npm test
+   ```
+
+3. Compila el instalador:
+
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File scripts\build-windows.ps1
+   ```
+
+4. El script hace lo siguiente:
+   - Copia Node.js al directorio de build
+   - Descarga WinSW (Windows Service Wrapper)
+   - Copia código fuente, dependencias y scripts
+   - Ejecuta las pruebas (`node --test`)
+   - Compila el instalador con NSIS
+
+5. El resultado queda en `dist\`:
+
+   ```
+   dist/
+   ├── PrintRocketClient-Setup.exe   ← Instalador (~90 MB)
+   └── SHA256SUMS.txt                ← Hash de verificación
+   ```
+
+### Publicar en GitHub Releases
+
+Después de compilar, sube el instalador a la página de Releases del repositorio:
+
+1. Ve a https://github.com/ruiz854/printrocket-client-erp/releases
+2. Click en **"Create a new release"**
+3. Tag: `v0.1.2` (o la versión actual)
+4. Arrastra el archivo `dist\PrintRocketClient-Setup.exe`
+5. Publica el release
+
+Así los usuarios pueden descargar el instalador directamente sin necesidad de compilar.
+
 ## Funcionamiento
 
 - El panel escucha solo en `127.0.0.1:8790` y muestra nombre, logo y color del negocio, conexión, trabajos, errores y registro reciente.
