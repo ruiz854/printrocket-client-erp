@@ -1,0 +1,13 @@
+{
+  "businessName": "Mi negocio",
+  "brandColor": "#2563eb",
+  "logoPath": "",
+  "printerName": "POS-80C",
+  "dashboardPort": 8790,
+  "supabaseUrl": "https://TU-PROYECTO.supabase.co",
+  "supabaseAnonKey": "sb_publishable_REEMPLAZAR",
+  "deviceEmail": "impresora@ejemplo.com",
+  "devicePassword": "REEMPLAZAR",
+  "allowedOrigins": ["https://tu-erp.example.com"],
+  "localApiToken": "REEMPLAZAR_CON_SECRETO_ALEATORIO"
+}

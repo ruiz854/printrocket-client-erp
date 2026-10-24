@@ -1,0 +1,33 @@
+<service>
+	<id>printerclientamazing.exe</id>
+	<name>PrinterClientAmazing</name>
+	<description>Consulta trabajos en la nube e imprime tickets en la impresora termica POS-80C.</description>
+	<executable>C:\Program Files\nodejs\node.exe</executable>
+	<argument>--harmony</argument>
+	<argument>C:\Users\amazi\OneDrive\Documentos\ImpresionTermicaAmazing\printer-client\node_modules\node-windows\lib\wrapper.js</argument>
+	<argument>--file</argument>
+	<argument>C:\Users\amazi\OneDrive\Documentos\ImpresionTermicaAmazing\printer-client\client.js</argument>
+	<argument>--scriptoptions=</argument>
+	<argument>--log</argument>
+	<argument>PrinterClientAmazing wrapper</argument>
+	<argument>--grow</argument>
+	<argument>0.25</argument>
+	<argument>--wait</argument>
+	<argument>5</argument>
+	<argument>--maxrestarts</argument>
+	<argument>10</argument>
+	<argument>--abortonerror</argument>
+	<argument>n</argument>
+	<argument>--stopparentfirst</argument>
+	<argument>undefined</argument>
+	<argument>--maxretries</argument>
+	<argument>10</argument>
+	<logmode>rotate</logmode>
+	<stoptimeout>30sec</stoptimeout>
+	<serviceaccount>
+		<domain>AMAZING</domain>
+		<user>LocalSystem</user>
+		<password></password>
+	</serviceaccount>
+	<workingdirectory>C:\Users\amazi\OneDrive\Documentos\ImpresionTermicaAmazing\printer-client</workingdirectory>
+</service>

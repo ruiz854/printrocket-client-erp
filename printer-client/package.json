@@ -1,0 +1,12 @@
+{
+  "name": "printer-client",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "client.js",
+  "scripts": {
+    "start": "node client.js"
+  },
+  "dependencies": {
+    "node-windows": "^1.0.0-beta.8"
+  }
+}
